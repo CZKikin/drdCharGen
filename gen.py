@@ -1,5 +1,18 @@
 #!/usr/bin/python3
 import random
+def vyberMenu(name, menuArr):
+    print(f"{name}:")
+    valid = False
+    while not valid:
+        for i in range(len(menuArr)):
+            print(f"{i+1} {menuArr[i].split(';')[0]}")
+        try:
+            volba = int(input("Volím: "))
+            valid = True
+        except Exception as e:
+            print(e)
+    return menuArr[volba-1] 
+
 def najdiOpravu(soubor, char):
     opravy = {}
     objekty = []
@@ -18,7 +31,8 @@ def najdiOpravu(soubor, char):
         opravy[i] = j
 
     return opravy 
-def vyberNahodneZeSouboru(soubor):
+
+def vyberZeSouboru(soubor):
     char = {}
     objekty = []
     with open(soubor, "r") as f:
@@ -28,7 +42,7 @@ def vyberNahodneZeSouboru(soubor):
             if i[0]!="#" and i!="":
                 objekty.append(i.strip()) 
 
-    objekt = random.choice(objekty)
+    objekt = vyberMenu(keys[0],objekty)
     objekt = objekt.split(";")
     for i, j in zip(keys, objekt):
         char[i] = j
@@ -75,8 +89,8 @@ def vygenerujStaty(char):
         char[i] = char[i] + int(opravy[i])
 
 if __name__ == "__main__":        
-    char = vyberNahodneZeSouboru("povolani")
-    rasa = vyberNahodneZeSouboru("rasy")
+    char = vyberZeSouboru("povolani")
+    rasa = vyberZeSouboru("rasy")
     nahradNedostatky(char, rasa)
 
     with open("jmena", "r") as f:
