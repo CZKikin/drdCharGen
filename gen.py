@@ -1,5 +1,25 @@
 #!/usr/bin/python3
-import random
+import random, subprocess
+def vypocitejPostihy(char):
+    switcher = {1: -5, 2: -4, 3: -4, 4: -3, 5: -3, 6: -2, 7: -2, 8: -1, 9: -1,
+            10: 0, 11: 0, 12: 0, 13: 1, 14: 1, 15: 2, 16: 2, 17: 3, 18: 3,
+            19: 4, 20: 4, 21: 5}
+    postihleStaty = ["sila","obratnost","odolnost","inteligence","charisma"]
+    for i in postihleStaty:
+        print(f"Postih {i}: {char[i]} + {switcher[char[i]]}")
+        char[i] += switcher[char[i]]
+
+def vypocitejHp(char):
+    tabulka = {"válečník": (10,10,0),
+            "hraničář": (8,6,2),
+            "alchymista": (7,6,1),
+            "kouzelník": (6,6,0),
+            "zloděj": (6,6,0)}
+    zaklad, kostka, bonus = tabulka[char["povolani"]]
+    hod = random.randint(1,kostka)
+    print(f"Hp: {zaklad} + hodil si: {hod} + {bonus}")
+    return zaklad + hod + bonus
+
 def vyberMenu(name, menuArr):
     print(f"{name}:")
     valid = False
@@ -63,6 +83,7 @@ def vypisCharakteru(char):
 Povolání: {char["povolani"]}
 Rasa: {char["rasa"]}
 Třída Velikosti: {char["tridavel"]}
+Životy: {char["hp"]}
 Síla: {char["sila"]}
 Inteligence: {char["inteligence"]}
 Odolnost: {char["odolnost"]}
@@ -87,21 +108,38 @@ def vygenerujStaty(char):
         char[i] = hod + bonus
         print(f"Rasová oprava pro {i}: {char[i]} + {opravy[i]}")
         char[i] = char[i] + int(opravy[i])
+        if char[i] < 1:
+            char[i] = 1
+
+def generateLows(char):
+    staty = ["sila","obratnost","odolnost","inteligence","charisma"]
+    minima = {}
+    for i in staty:
+        minima[i] = int(char[i].split("-")[0])
+    return minima
+
+def checkForLows(char, minima):
+    staty = ["sila","obratnost","odolnost","inteligence","charisma"]
+    for i in staty:
+        if char[i] < minima[i]:
+            char[i] = minima[i]
 
 if __name__ == "__main__":        
     char = vyberZeSouboru("povolani")
     rasa = vyberZeSouboru("rasy")
     nahradNedostatky(char, rasa)
+    minima = generateLows(char)
 
     with open("jmena", "r") as f:
         char["jmeno"] = random.choice(f.readlines()).strip()
 
-    print("Základ\n===")
-    vypisCharakteru(char)
-    print("===")
-
     vygenerujStaty(char)
+    vypocitejPostihy(char)
+    char["hp"] = vypocitejHp(char)
+
+    checkForLows(char, minima)
     print("===\nVypočtené staty\n===")
     vypisCharakteru(char)
+
 
 
