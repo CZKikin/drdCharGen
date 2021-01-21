@@ -4,6 +4,7 @@ def vypocitejPostihy(char, hlavniStaty):
     switcher = {1: -5, 2: -4, 3: -4, 4: -3, 5: -3, 6: -2, 7: -2, 8: -1, 9: -1,
             10: 0, 11: 0, 12: 0, 13: 1, 14: 1, 15: 2, 16: 2, 17: 3, 18: 3,
             19: 4, 20: 4, 21: 5}
+    vypocitejHp(char, switcher)
     postihleStaty = ["sila","obratnost","odolnost","inteligence","charisma"]
     for i in postihleStaty:
         if switcher[char[i]] < 0:
@@ -13,16 +14,9 @@ def vypocitejPostihy(char, hlavniStaty):
             print(f"Postih {i}: {char[i]} +{switcher[char[i]]}")
             char[i] = str(char[i]) + f" +{str(switcher[char[i]])}"
 
-def vypocitejHp(char):
-    tabulka = {"valecnik": (10,10,0),
-            "hranicar": (8,6,2),
-            "alchymista": (7,6,1),
-            "kouzelnik": (6,6,0),
-            "zlodej": (6,6,0)}
-    zaklad, kostka, bonus = tabulka[char["povolani"]]
-    hod = random.randint(1,kostka)
-    print(f"Hp: {zaklad} + hodil si: {hod} + {bonus}")
-    return zaklad + hod + bonus
+
+def vypocitejHp(char, sw):
+    char["hp"] = int(char["hp"]) + int(sw[char["odolnost"]])
 
 def vyberMenu(name, menuArr):
     print(f"{name}:")
@@ -147,7 +141,6 @@ if __name__ == "__main__":
     checkForLows(char, minima)
 
     vypocitejPostihy(char, hlavniStaty)
-    char["hp"] = vypocitejHp(char)
     print("===\nVypočtené staty\n===")
     vypisCharakteru(char)
 

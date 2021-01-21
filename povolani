@@ -1,6 +1,6 @@
-#povolani;sila;obratnost;odolnost;inteligence;charisma
-valecnik;13-18;x;13-18;x;x
-hranicar;11-16;x;13-18;x;x
-alchymista;13-18;x;13-18;x;x
-kouzelnik;x;x;x;14-19;13-18
-zlodej;x;14-19;x;x;12-17
+#povolani;sila;obratnost;odolnost;inteligence;charisma;hp
+valecnik;13-18;x;13-18;x;x;10
+hranicar;11-16;x;13-18;x;x;8
+alchymista;13-18;x;13-18;x;x;7
+kouzelnik;x;x;x;14-19;13-18;6
+zlodej;x;14-19;x;x;12-17;6
