@@ -1,20 +1,22 @@
 #!/usr/bin/python3
 import random, subprocess
-def vypocitejPostihy(char):
+def vypocitejPostihy(char, hlavniStaty):
     switcher = {1: -5, 2: -4, 3: -4, 4: -3, 5: -3, 6: -2, 7: -2, 8: -1, 9: -1,
             10: 0, 11: 0, 12: 0, 13: 1, 14: 1, 15: 2, 16: 2, 17: 3, 18: 3,
             19: 4, 20: 4, 21: 5}
     postihleStaty = ["sila","obratnost","odolnost","inteligence","charisma"]
+    print(f"DEBUG: HLAVNI STATY: {hlavniStaty}")
     for i in postihleStaty:
-        print(f"Postih {i}: {char[i]} + {switcher[char[i]]}")
-        char[i] += switcher[char[i]]
+        if i in hlavniStaty:
+            print(f"Postih {i}: {char[i]} + {switcher[char[i]]}")
+            char[i] += switcher[char[i]]
 
 def vypocitejHp(char):
-    tabulka = {"válečník": (10,10,0),
-            "hraničář": (8,6,2),
+    tabulka = {"valecnik": (10,10,0),
+            "hranicar": (8,6,2),
             "alchymista": (7,6,1),
-            "kouzelník": (6,6,0),
-            "zloděj": (6,6,0)}
+            "kouzelnik": (6,6,0),
+            "zlodej": (6,6,0)}
     zaklad, kostka, bonus = tabulka[char["povolani"]]
     hod = random.randint(1,kostka)
     print(f"Hp: {zaklad} + hodil si: {hod} + {bonus}")
@@ -71,12 +73,16 @@ def vyberZeSouboru(soubor):
 
 def nahradNedostatky(char, rasa):
     nahraditelne = ["sila","obratnost","odolnost","inteligence","charisma"]
+    hlavniStaty = [] 
     for i in nahraditelne:
         if char[i] == "x":
             char[i] = rasa[i]
+        else:
+            hlavniStaty.append(i)
     for i in rasa:
         if i not in nahraditelne:
             char[i] = rasa[i]
+    return hlavniStaty
 
 def vypisCharakteru(char):
     print(f"""Jméno: {char["jmeno"]}
@@ -127,14 +133,14 @@ def checkForLows(char, minima):
 if __name__ == "__main__":        
     char = vyberZeSouboru("povolani")
     rasa = vyberZeSouboru("rasy")
-    nahradNedostatky(char, rasa)
+    hlavniStaty = nahradNedostatky(char, rasa)
     minima = generateLows(char)
 
     with open("jmena", "r") as f:
         char["jmeno"] = random.choice(f.readlines()).strip()
 
     vygenerujStaty(char)
-    vypocitejPostihy(char)
+    vypocitejPostihy(char, hlavniStaty)
     char["hp"] = vypocitejHp(char)
 
     checkForLows(char, minima)
