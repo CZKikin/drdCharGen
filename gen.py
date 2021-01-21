@@ -5,11 +5,13 @@ def vypocitejPostihy(char, hlavniStaty):
             10: 0, 11: 0, 12: 0, 13: 1, 14: 1, 15: 2, 16: 2, 17: 3, 18: 3,
             19: 4, 20: 4, 21: 5}
     postihleStaty = ["sila","obratnost","odolnost","inteligence","charisma"]
-    print(f"DEBUG: HLAVNI STATY: {hlavniStaty}")
     for i in postihleStaty:
-        if i in hlavniStaty:
-            print(f"Postih {i}: {char[i]} + {switcher[char[i]]}")
-            char[i] += switcher[char[i]]
+        if switcher[char[i]] < 0:
+            print(f"Postih {i}: {char[i]} {switcher[char[i]]}")
+            char[i] = str(char[i]) + f" {str(switcher[char[i]])}"
+        else:
+            print(f"Postih {i}: {char[i]} +{switcher[char[i]]}")
+            char[i] = str(char[i]) + f" +{str(switcher[char[i]])}"
 
 def vypocitejHp(char):
     tabulka = {"valecnik": (10,10,0),
@@ -96,7 +98,7 @@ Odolnost: {char["odolnost"]}
 Obratnost: {char["obratnost"]}
 Charisma: {char["charisma"]}""")
 
-def vygenerujStaty(char):
+def vygenerujStaty(char, hlavniStaty):
     switcher = {5: 1, 10: 2, 15: 3}
     staty = ["sila","obratnost","odolnost","inteligence","charisma"]
     opravy = najdiOpravu("tabOprav", char)
@@ -106,14 +108,16 @@ def vygenerujStaty(char):
         pocetHodu = switcher[pocetHodu]
         bonus = int(meze[0]) - pocetHodu 
         hod = 0
-
+        
         for j in range(pocetHodu):
             hod += random.randint(1,6)
             print(f"Hodil si {hod} pro {i}")
 
         char[i] = hod + bonus
-        print(f"Rasová oprava pro {i}: {char[i]} + {opravy[i]}")
-        char[i] = char[i] + int(opravy[i])
+        if i in hlavniStaty:
+            print(f"Rasová oprava pro {i}: {char[i]} + {opravy[i]}")
+            char[i] = char[i] + int(opravy[i])
+
         if char[i] < 1:
             char[i] = 1
 
@@ -139,11 +143,11 @@ if __name__ == "__main__":
     with open("jmena", "r") as f:
         char["jmeno"] = random.choice(f.readlines()).strip()
 
-    vygenerujStaty(char)
+    vygenerujStaty(char, hlavniStaty)
+    checkForLows(char, minima)
+
     vypocitejPostihy(char, hlavniStaty)
     char["hp"] = vypocitejHp(char)
-
-    checkForLows(char, minima)
     print("===\nVypočtené staty\n===")
     vypisCharakteru(char)
 
